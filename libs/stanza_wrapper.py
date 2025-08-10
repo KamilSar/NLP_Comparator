@@ -1,33 +1,44 @@
 import stanza
 
-loaded_pipelines = {}
+_loaded = {}
 
-def process_text(text, lang_code="pl"):
-    if lang_code not in loaded_pipelines:
+def _ensure_pipeline(lang_code="pl"):
+    if lang_code not in _loaded:
         stanza.download(lang_code, verbose=False)
-        loaded_pipelines[lang_code] = stanza.Pipeline(
+        _loaded[lang_code] = stanza.Pipeline(
             lang=lang_code,
             processors="tokenize,mwt,pos,lemma,depparse,ner",
             use_gpu=False
         )
+    return _loaded[lang_code]
 
-    nlp = loaded_pipelines[lang_code]
+def process_text(text, lang_code="pl"):
+    """
+    Stanza: brak własnych stopwords → NIE zwracamy żadnych pól stopwords.
+    Zwracamy SBD, POS, Lemmas, Entities.
+    """
+    nlp = _ensure_pipeline(lang_code)
     doc = nlp(text)
 
-    tokens = []
-    lemmas = []
-    entities = []
+    Tokens, Lemmas, Entities = [], [], []
+    Sentences, POS = [], []
 
-    for sentence in doc.sentences:
-        for word in sentence.words:
-            tokens.append(word.text)
-            lemmas.append(word.lemma)
+    for sent in doc.sentences:
+        sent_text = " ".join(w.text for w in sent.words)
+        Sentences.append(sent_text)
+        for w in sent.words:
+            Tokens.append(w.text)
+            Lemmas.append(w.lemma)
+            POS.append((w.text, w.upos))  # Universal POS
 
     for ent in doc.ents:
-        entities.append(ent.text)
+        Entities.append((ent.text, ent.type))
 
     return {
-        "tokens": tokens,
-        "lemmas": lemmas,
-        "entities": entities,
+        "Tokens": Tokens,
+        "Lemmas": Lemmas,
+        "Entities": Entities,
+        "Sentences": Sentences,
+        "POS": POS,
+        # brak stopwords pól, bo biblioteka ich nie ma
     }

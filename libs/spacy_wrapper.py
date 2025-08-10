@@ -1,55 +1,59 @@
 import spacy
 from spacy.cli import download
 
-# Obsługiwane modele językowe
 SUPPORTED_MODELS = {
     "pl": "pl_core_news_sm",
-    "en": "en_core_web_sm"
+    "en": "en_core_web_sm",
 }
 
-# Cache na załadowane modele
-loaded_models = {}
+_loaded = {}
 
-def load_spacy_model(lang_code):
-    """
-    Ładuje model spaCy dla danego języka.
-    Jeśli model nie jest zainstalowany — pobiera go automatycznie.
-    """
+def _get_nlp(lang_code):
     if lang_code not in SUPPORTED_MODELS:
         raise ValueError(f"Nieobsługiwany język: {lang_code}")
-
     model_name = SUPPORTED_MODELS[lang_code]
-
-    if lang_code not in loaded_models:
+    if lang_code not in _loaded:
         try:
-            loaded_models[lang_code] = spacy.load(model_name)
+            _loaded[lang_code] = spacy.load(model_name)
         except OSError:
-            print(f"Model '{model_name}' nie znaleziony — trwa pobieranie...")
+            print(f"Model '{model_name}' nie znaleziony — pobieram...")
             download(model_name)
-            loaded_models[lang_code] = spacy.load(model_name)
+            _loaded[lang_code] = spacy.load(model_name)
+    return _loaded[lang_code]
 
-    return loaded_models[lang_code]
+def _native_stopwords(nlp):
+    return set(getattr(nlp.Defaults, "stop_words", set()))
 
 def process_text(text, lang_code):
     """
-    Przetwarza tekst za pomocą spaCy.
-    Zwraca tokeny, lematy, byty NER, morfologię, składnię, segmentację.
+    spaCy: ma własne stopwords → zwracamy TokensNoStop i StopwordsRemoved.
     """
-    nlp = load_spacy_model(lang_code)
+    nlp = _get_nlp(lang_code)
     doc = nlp(text)
 
-    tokens = [token.text for token in doc]
-    lemmas = [token.lemma_ for token in doc]
-    entities = [(ent.text, ent.label_) for ent in doc.ents]
-    morph = [(token.text, token.morph.to_dict()) for token in doc]
-    dependencies = [(token.text, token.dep_, token.head.text) for token in doc]
-    segment_words = [token.text for token in doc]
+    Tokens = [t.text for t in doc]
+    Lemmas = [t.lemma_ for t in doc]
+    Entities = [(ent.text, ent.label_) for ent in doc.ents]
+    Sentences = [s.text.strip() for s in doc.sents]
+    POS = [(t.text, t.pos_) for t in doc]
+
+    sw = _native_stopwords(nlp)
+    TokensNoStop = [t for t in Tokens if t.lower() not in sw]
+    StopwordsRemoved = len(Tokens) - len(TokensNoStop)
+
+    morph = [(t.text, t.morph.to_dict()) for t in doc]
+    dependencies = [(t.text, t.dep_, t.head.text) for t in doc]
+    segment_words = [t.text for t in doc]
 
     return {
-        "tokens": tokens,
-        "lemmas": lemmas,
-        "entities": entities,
+        "Tokens": Tokens,
+        "Lemmas": Lemmas,
+        "Entities": Entities,
+        "Sentences": Sentences,
+        "POS": POS,
+        "TokensNoStop": TokensNoStop,
+        "StopwordsRemoved": StopwordsRemoved,
         "morph": morph,
         "dependencies": dependencies,
-        "segment_words": segment_words
+        "segment_words": segment_words,
     }

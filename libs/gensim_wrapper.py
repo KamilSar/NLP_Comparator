@@ -1,19 +1,31 @@
+import re
 from gensim.utils import simple_preprocess
 from langdetect import detect
 
 def process_text(text, lang_code=None):
     """
-    Przetwarza tekst za pomocą Gensim (prosta tokenizacja).
-    Nie używa żadnych zewnętrznych lematyzatorów (np. NLTK).
+    Gensim: brak natywnych stopwords/POS/NER.
+    - Tokenizacja: simple_preprocess (lowercase, bez interpunkcji)
+    - SBD: prosta regexowa (kropka, wykrzyknik, pytajnik)
+    - POS: N/A (puste)
+    - Stopwords: brak (NIE UŻYWAMY fallbacku!)
     """
-    tokens = simple_preprocess(text)
+    Tokens = simple_preprocess(text)
     lang = lang_code or detect(text)
 
+    Sentences = [s.strip() for s in re.split(r'(?<=[\.\!\?])\s+', text) if s.strip()]
+    POS = []         # brak
+    Entities = []    # brak
+    Lemmas = Tokens  # brak lematyzacji → zwracamy tokeny
+
     return {
-        "tokens": tokens,
-        "lemmas": tokens,         # brak lematyzacji – zwracamy tokeny
-        "entities": [],           # brak NER
-        "morph": [],              # brak morfologii
-        "dependencies": [],       # brak składni
-        "segment_words": tokens   # segmentacja = tokeny
+        "Tokens": Tokens,
+        "Lemmas": Lemmas,
+        "Entities": Entities,
+        "Sentences": Sentences,
+        "POS": POS,
+        # brak stopwords pól, bo biblioteka ich nie ma
+        "morph": [],
+        "dependencies": [],
+        "segment_words": Tokens,
     }
