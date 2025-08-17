@@ -4,7 +4,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 from nltk.corpus import wordnet, stopwords
 
-# Pobieramy ZASOBY NLTK – to nadal "wewnątrz NLTK", nie korzystamy z innych bibliotek
 def _safe_download(pkg):
     try:
         nltk.download(pkg, quiet=True)
@@ -39,7 +38,7 @@ def _native_stopwords(lang_code: str):
     try:
         return set(stopwords.words(_lang_name(lang_code)))
     except Exception:
-        # brak stopwords w lokalnym NLTK → nie wyświetlamy sekcji w app (bo pola będą puste)
+        # brak stopwords w lokalnym NLTK → nie wyświetlamy sekcji w app (bo pola są puste)
         return None
 
 def process_text(text, lang_code="pl"):

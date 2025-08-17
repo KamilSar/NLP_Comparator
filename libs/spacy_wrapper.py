@@ -26,7 +26,7 @@ def _native_stopwords(nlp):
 
 def process_text(text, lang_code):
     """
-    spaCy: ma własne stopwords → zwracamy TokensNoStop i StopwordsRemoved.
+    spaCy: ma własne stopwords- zwracamy TokensNoStop i StopwordsRemoved.
     """
     nlp = _get_nlp(lang_code)
     doc = nlp(text)

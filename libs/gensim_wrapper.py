@@ -16,7 +16,7 @@ def process_text(text, lang_code=None):
     Sentences = [s.strip() for s in re.split(r'(?<=[\.\!\?])\s+', text) if s.strip()]
     POS = []         # brak
     Entities = []    # brak
-    Lemmas = Tokens  # brak lematyzacji → zwracamy tokeny
+    Lemmas = Tokens  # brak lematyzacji- zwracamy tokeny
 
     return {
         "Tokens": Tokens,
@@ -24,7 +24,7 @@ def process_text(text, lang_code=None):
         "Entities": Entities,
         "Sentences": Sentences,
         "POS": POS,
-        # brak stopwords pól, bo biblioteka ich nie ma
+        # brak stopwords pól- brak w bibliotece
         "morph": [],
         "dependencies": [],
         "segment_words": Tokens,

@@ -36,7 +36,7 @@ def process_text(text, lang_code=None):
         # Tokeny – prosto, żeby było spójnie z UI (to NIE jest tokenizacja modelu)
         Tokens = text.split()
     except Exception as e:
-        print(f"❌ Błąd Transformers: {e}")
+        print(f" Błąd Transformers: {e}")
         Tokens = []
         Entities = []
 

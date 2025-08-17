@@ -14,7 +14,7 @@ def _ensure_pipeline(lang_code="pl"):
 
 def process_text(text, lang_code="pl"):
     """
-    Stanza: brak własnych stopwords → NIE zwracamy żadnych pól stopwords.
+    Stanza: brak własnych stopwords- NIE zwracamy żadnych pól stopwords.
     Zwracamy SBD, POS, Lemmas, Entities.
     """
     nlp = _ensure_pipeline(lang_code)

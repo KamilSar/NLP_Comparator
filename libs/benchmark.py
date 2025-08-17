@@ -27,7 +27,7 @@ def benchmark_nlp_library(name, func, text):
     duration = round(end_time - start_time, 3)
     memory_diff = round(end_mem - start_mem, 3)
 
-    # --- Pobieranie danych (DUŻE klucze z fallbackiem) ---
+    # Pobieranie danych (DUŻE klucze z fallbackiem)
     tokens     = _get_list(results, "Tokens", "tokens")
     lemmas     = _get_list(results, "Lemmas", "lemmas")
     entities   = _get_list(results, "Entities", "entities")
@@ -38,20 +38,20 @@ def benchmark_nlp_library(name, func, text):
     tokens_no_sw     = _get_list(results, "TokensNoStop", "tokens_no_stopwords")
     stopwords_removed = _get_val(results, "StopwordsRemoved", "stopwords_removed_count", 0)
 
-    # --- Logi terminalowe (pomocnicze) ---
-    print(f"⏱️ Czas wykonania: {duration}s | ΔRAM: {memory_diff} MB | CPU(before/after) {start_cpu}% → {end_cpu}%")
-    print(f"📌 Tokeny(20): {tokens[:20]}")
-    print(f"📌 Lematy(20): {lemmas[:20]}")
-    print(f"📌 NER(10): {entities[:10]}")
+    # Logi terminalowe (pomocnicze)
+    print(f" Czas wykonania: {duration}s | ΔRAM: {memory_diff} MB | CPU(before/after) {start_cpu}% → {end_cpu}%")
+    print(f" Tokeny(20): {tokens[:20]}")
+    print(f" Lematy(20): {lemmas[:20]}")
+    print(f" NER(10): {entities[:10]}")
     if sentences:
-        print(f"📌 Zdania: {len(sentences)}; pierwsze: {sentences[:2]}")
+        print(f" Zdania: {len(sentences)}; pierwsze: {sentences[:2]}")
     if pos_tags:
-        print(f"📌 POS(10): {pos_tags[:10]}")
+        print(f" POS(10): {pos_tags[:10]}")
     if "TokensNoStop" in results or "tokens_no_stopwords" in results:
-        print(f"📌 Stopwords: usunięto {stopwords_removed}; po filtracji: {len(tokens_no_sw)} tokenów")
+        print(f" Stopwords: usunięto {stopwords_removed}; po filtracji: {len(tokens_no_sw)} tokenów")
     print()
 
-    # --- Podsumowanie do CSV/wykresów ---
+    # Podsumowanie do CSV/wykresów
     summary = {
         "Library": name,
         "Execution Time (s)": duration,

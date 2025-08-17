@@ -15,7 +15,7 @@ from libs import (
     csv_writer,
 )
 
-# (opcjonalnie) preload transformers
+# (opcjonalne) preload transformers; inaczej pojawiaja sie komentarze później
 try:
     transformers_wrapper.preload_models()
 except Exception as e:
@@ -24,7 +24,7 @@ except Exception as e:
 st.set_page_config(page_title="Porównywarka NLP", layout="wide")
 st.title("Porównywarka bibliotek NLP")
 
-# === Wgrywanie pliku lub tekst ręczny ===
+# Wgrywanie pliku lub tekst ręczny
 text = ""
 uploaded_file = st.file_uploader("Wgraj plik TXT lub PDF", type=["txt", "pdf"])
 
@@ -42,7 +42,7 @@ manual_input = st.text_area("Tekst (opcjonalnie)", height=200)
 if manual_input.strip():
     text = manual_input.strip()
 
-# === Jeśli jest tekst ===
+# analiza tekstu
 if text:
     if len(text) > 10000:
         text = text[:10000]
@@ -81,30 +81,30 @@ if text:
         results_data.append(summary)
         details[lib_name] = results
 
-        # Odczyt TYLKO z DUŻYCH kluczy
+        # Odczyt
         tokens       = results.get("Tokens", [])
         lemmas       = results.get("Lemmas", [])
         entities     = results.get("Entities", [])
         sentences    = results.get("Sentences", [])
         pos_tags     = results.get("POS", [])
 
-        # Pola stopwords (jeśli biblioteka je ma – ale nie pokazujemy teraz; tylko na końcu)
+        # Pola stopwords- jeśli biblioteka posiada stopwords
         tokens_no_sw = results.get("TokensNoStop", [])
         removed_sw   = results.get("StopwordsRemoved", 0)
         has_sw_fields = ("TokensNoStop" in results) and ("StopwordsRemoved" in results)
 
-        # --- METRYKI PODSTAWOWE ---
+        # METRYKI PODSTAWOWE
         st.text(f"Czas wykonania: {summary.get('Execution Time (s)', 0):.3f} s")
         st.text(f"Tokeny: {summary.get('Tokens Count', len(tokens))}")
         st.text(f"Lematy: {summary.get('Lemmas Count', len(lemmas))}")
         st.text(f"Byty NER: {summary.get('Entities Count', len(entities))}")
 
-        # --- PODGLĄDY KRÓTKIE ---
+        # PODGLĄDY KRÓTKIE
         st.write("Tokeny (pierwsze 20):", tokens[:20])
         st.write("Lematy (pierwsze 20):", lemmas[:20])
         st.write("Byty NER (pierwsze 10):", entities[:10])
 
-        # === SBD ===
+        #  Segemntacja zdan
         st.markdown("### Segmentacja zdań (SBD)")
         st.write(f"Liczba zdań: {len(sentences)}")
         if len(sentences) > 0:
@@ -116,11 +116,11 @@ if text:
         else:
             st.write([])
 
-        # === POS ===
+        # POS- tagging
         st.markdown("### POS-tagging (pierwsze 20)")
         st.write(pos_tags[:20] if pos_tags else [])
 
-        # === Morfologia, dependencies, segmentacja słów ===
+        # Morfologia, dependencies, segmentacja słów
         if "morph" in results:
             st.write("Morfologia (pierwsze 10):", results.get("morph", [])[:10])
         if "dependencies" in results:
@@ -128,7 +128,7 @@ if text:
         if "segment_words" in results:
             st.write("Segmentacja słów (pierwsze 20):", results.get("segment_words", [])[:20])
 
-        # === Pełne listy NA KOŃCU ===
+        # Pełne listy na końcu
         with st.expander("Tokeny (pełna lista)"):
             st.write(tokens)
 
@@ -138,7 +138,7 @@ if text:
         with st.expander("Byty NER (pełna lista)"):
             st.write(entities)
 
-        # Stopwords: TYLKO na końcu (statystyki + pełna lista usuniętych), zawsze pokazujemy expander
+        # Stopwords (statystyki + pełna lista usuniętych)
         removed_list = []
         if tokens and tokens_no_sw:
             # policz usunięte jako różnicę multizbiorów (Tokens - TokensNoStop)
@@ -157,7 +157,7 @@ if text:
             st.write(f"Usunięte stopwords: {removed_sw if has_sw_fields else 0}")
             st.write("Usunięte stopwords (pełna lista):", removed_list)
 
-    # === Zapis i wykresy ===
+    # Zapis i wykresy
     if results_data:
         csv_writer.save_results_to_csv(results_data, details)
         st.success("Wyniki zostały zapisane do pliku nlp_comparison_results.csv")

@@ -6,7 +6,7 @@ def extract_text_from_txt(file_path):
         with open(file_path, "r", encoding="utf-8") as file:
             return file.read()
     except FileNotFoundError:
-        print(f"❌ Plik TXT nie został znaleziony: {file_path}")
+        print(f" Plik TXT nie został znaleziony: {file_path}")
         return ""
 
 def extract_text_from_pdf(file_path):
@@ -19,7 +19,7 @@ def extract_text_from_pdf(file_path):
                 text += page_text + "\n"
         return text
     except Exception as e:
-        print(f"❌ Błąd podczas odczytu PDF: {e}")
+        print(f" Błąd podczas odczytu PDF: {e}")
         return ""
 
 def get_text_interactive():
@@ -31,7 +31,7 @@ def get_text_interactive():
         choice = input("Twój wybór (1/2/3): ").strip()
 
         if choice == "1":
-            path = input("🔠 Podaj ścieżkę do pliku TXT: ").strip()
+            path = input(" Podaj ścieżkę do pliku TXT: ").strip()
             if not path.lower().endswith(".txt"):
                 path += ".txt"
             text = extract_text_from_txt(path)
@@ -39,7 +39,7 @@ def get_text_interactive():
                 return text
 
         elif choice == "2":
-            path = input("📄 Podaj ścieżkę do pliku PDF: ").strip()
+            path = input(" Podaj ścieżkę do pliku PDF: ").strip()
             if not path.lower().endswith(".pdf"):
                 path += ".pdf"
             text = extract_text_from_pdf(path)
@@ -47,8 +47,8 @@ def get_text_interactive():
                 return text
 
         elif choice == "3":
-            print("✍️ Wpisz swój tekst (zakończ ENTER):")
+            print("️ Wpisz swój tekst (zakończ ENTER):")
             return input("> ")
 
         else:
-            print("❌ Nieprawidłowy wybór. Spróbuj ponownie.\n")
+            print(" Nieprawidłowy wybór. Spróbuj ponownie.\n")

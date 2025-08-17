@@ -7,7 +7,7 @@ def process_text(text, lang_code=None):
     try:
         blob = TextBlob(text)
         Tokens = list(blob.words)
-        # Proste lematy dostępne w TextBlob (angielski działa sensownie; dla PL będą słabe/identyczne)
+        # Proste lematy dostępne w TextBlob (angielski działa sensownie; dla PL są słabe)
         Lemmas = [w.lemmatize() for w in Tokens]
         Entities = []  # TextBlob nie wspiera NER
         # Prosta segmentacja zdań (SBD)
@@ -34,7 +34,6 @@ def process_text(text, lang_code=None):
         "Entities": Entities,
         "Sentences": Sentences,
         "POS": POS,
-        # brak stopwords (biblioteka ich nie ma)
         "morph": morph,
         "dependencies": dependencies,
         "segment_words": segment_words,
